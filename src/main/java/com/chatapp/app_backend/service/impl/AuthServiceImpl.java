@@ -29,8 +29,8 @@ public class AuthServiceImpl implements AuthService {
     public AuthServiceImpl(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            @Value("${JWT_SECRET}") String secret,
-            @Value("${JWT_EXPIRATION}") long expiration
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.expiration}") long expiration
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
