@@ -21,7 +21,7 @@ public class StartupLogger {
     @Value("${app.api.auth-base}")
     private String authBasePath;
 
-    @Value("${server.port}")
+    @Value("${server.port:}")
     private String serverPort;
 
     @EventListener(ApplicationReadyEvent.class)
