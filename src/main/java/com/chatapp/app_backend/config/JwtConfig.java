@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JwtConfig {
 
-    @Value("${JWT_SECRET}")
+    @Value("${jwt.secret}")
     private String secret_key;
 
-    @Value("${JWT_EXPIRATION}")
+    @Value("${jwt.expiration}")
     private long jwt_expiration;
 
     public String getSecret_key(){
