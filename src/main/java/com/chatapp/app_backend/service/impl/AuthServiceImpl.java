@@ -4,40 +4,31 @@ import com.chatapp.app_backend.domain.User;
 import com.chatapp.app_backend.dto.auth.AuthResponse;
 import com.chatapp.app_backend.dto.auth.LoginRequest;
 import com.chatapp.app_backend.dto.auth.RegisterRequest;
+import com.chatapp.app_backend.exception.BadRequestException;
+import com.chatapp.app_backend.exception.UnauthorizedException;
 import com.chatapp.app_backend.repository.UserRepository;
+import com.chatapp.app_backend.security.JwtUtil;
 import com.chatapp.app_backend.service.AuthService;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Date;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final Key jwtKey;
-    private final long jwtExpiration;
+    private final JwtUtil jwtUtil;
 
     public AuthServiceImpl(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration}") long expiration
+            JwtUtil jwtUtil
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtKey = Keys.hmacShaKeyFor(
-                secret.getBytes(StandardCharsets.UTF_8)
-        );
-        this.jwtExpiration = expiration;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -45,8 +36,22 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse register(RegisterRequest registerRequest) {
 
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new RuntimeException("Email Already Registered");
+            throw new BadRequestException(400,"Bad Request","P","Email Already Registered");
         }
+
+        if (registerRequest.getPassword() == null ||
+                registerRequest.getConfirmPassword() == null ||
+                registerRequest.getPassword().isEmpty() ||
+                registerRequest.getConfirmPassword().isEmpty() ||
+
+                !registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+
+            BadRequestException ex =  new BadRequestException(400,"Bad Request","P","Passwords don't match!");
+            throw ex;
+
+//            throw new BadRequestException("Confirm Password and Password don't match!");
+        }
+
 
         User user = new User();
         user.setEmail(registerRequest.getEmail());
@@ -68,13 +73,23 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(LoginRequest request) {
 
+
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new BadRequestException(
+                        401,
+                        "Unauthorized",
+                        "e401-a",
+                        "User Not Found in DB!"));
 
         if (!passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new BadRequestException(
+                    401,
+                    "Unauthorized",
+                    "e401-b",
+                    "Invalid credentials !!"
+            );
         }
 
         String token = generateToken(user);
@@ -87,14 +102,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String generateToken(User user) {
-        return Jwts.builder()
-                .setSubject(user.getId())
-                .claim("email", user.getEmail())
-                .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(System.currentTimeMillis() + jwtExpiration)
-                )
-                .signWith(jwtKey)
-                .compact();
+        return jwtUtil.generateToken(user.getEmail(), user.getId());
     }
 }

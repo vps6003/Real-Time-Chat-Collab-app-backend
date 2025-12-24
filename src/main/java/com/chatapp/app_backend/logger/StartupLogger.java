@@ -24,10 +24,14 @@ public class StartupLogger {
     @Value("${server.port:}")
     private String serverPort;
 
+    @Value("${app.env}")
+    private  String environment;
+
     @EventListener(ApplicationReadyEvent.class)
     public void printStartupInfo() {
         logger.info("==============================================");
         logger.info("🚀 Application started successfully!");
+        logger.info("🚀 Application environment : {}" ,environment);
         logger.info("👉 REST Server: http://localhost:" + serverPort);
         logger.info("👉 Auth API Base: http://localhost:" + serverPort + authBasePath);
         logger.info("👉 WebSocket Base URL: {}", wsBaseUrl);

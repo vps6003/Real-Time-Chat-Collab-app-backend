@@ -17,4 +17,8 @@ public class RegisterRequest {
     public String getUsername() {
         return username;
     }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
 }

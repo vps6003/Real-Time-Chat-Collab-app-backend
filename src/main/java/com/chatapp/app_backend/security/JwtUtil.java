@@ -36,11 +36,13 @@ public class JwtUtil {
     }
 
     public Claims extractClaims(String token){
-        return Jwts.parserBuilder()
+        Claims check =  Jwts.parserBuilder()
                 .setSigningKey(jwtKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+        System.out.println(check);
+        return check;
     }
 
     public boolean isExpired(String token){
