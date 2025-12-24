@@ -34,5 +34,7 @@ build/
 
 .env
 
-application.properties
+# Spring config
+src/main/resources/application.properties
+# Spring config
 src/main/resources/application.properties
