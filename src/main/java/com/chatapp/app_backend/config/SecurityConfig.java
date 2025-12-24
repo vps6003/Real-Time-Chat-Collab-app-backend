@@ -56,8 +56,8 @@ public class SecurityConfig {
         // Authorization rules
         http.authorizeHttpRequests(auth -> auth
                 // Allow login/register without token
-//                .requestMatchers(authBase + "/**").permitAll()
-                        .requestMatchers("/vps_chat_room/auth/**").permitAll()
+                .requestMatchers(authBase + "/**").permitAll()
+//                        .requestMatchers("/vps_chat_room/auth/**").permitAll()
                 // All other APIs require authentication
                 .anyRequest().authenticated()
         );

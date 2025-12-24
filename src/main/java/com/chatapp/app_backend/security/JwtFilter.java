@@ -47,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // ✅ Skip JWT processing for public auth endpoints
-        if (path.startsWith("/vps_chat_room/auth")) {
+        if (path.startsWith(authBasePath)) {
             filterChain.doFilter(request, response);
             return;
         }
