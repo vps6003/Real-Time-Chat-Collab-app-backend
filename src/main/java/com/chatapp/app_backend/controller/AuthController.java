@@ -7,9 +7,8 @@ import com.chatapp.app_backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-//@RequestMapping("${app.api.auth-base}")
 @RestController
-@RequestMapping("/vps_chat_room/auth")
+@RequestMapping("${app.api.auth-base}")
 @CrossOrigin
 public class AuthController {
 
