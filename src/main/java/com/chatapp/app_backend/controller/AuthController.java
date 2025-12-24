@@ -1,13 +1,16 @@
 package com.chatapp.app_backend.controller;
 
-import com.chatapp.app_backend.dto.LoginRequest;
-import com.chatapp.app_backend.dto.RegisterRequest;
+import com.chatapp.app_backend.dto.auth.AuthResponse;
+import com.chatapp.app_backend.dto.auth.LoginRequest;
+import com.chatapp.app_backend.dto.auth.RegisterRequest;
 import com.chatapp.app_backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+//@RequestMapping("${app.api.auth-base}")
 @RestController
-@RequestMapping("${app.api.auth-base}")
+@RequestMapping("/vps_chat_room/auth")
+@CrossOrigin
 public class AuthController {
 
     private final AuthService authService;
@@ -18,19 +21,19 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(
+    public ResponseEntity<AuthResponse> register(
             @RequestBody RegisterRequest request
     ) {
-        authService.register(request);
-        return ResponseEntity.ok("User Registered Successfully");
+        AuthResponse authResponse =  authService.register(request);
+        return ResponseEntity.ok(authResponse);
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<AuthResponse> login(
             @RequestBody LoginRequest request
     ) {
-        authService.login(request);
-        return ResponseEntity.ok("Login successful");
+        AuthResponse authResponse = authService.login(request);
+        return ResponseEntity.ok(authResponse);
     }
 }

@@ -1,17 +1,13 @@
 package com.chatapp.app_backend.service;
 
-import com.chatapp.app_backend.dto.LoginRequest;
-import com.chatapp.app_backend.dto.RegisterRequest;
-import org.springframework.stereotype.Service;
+import com.chatapp.app_backend.dto.auth.AuthResponse;
+import com.chatapp.app_backend.dto.auth.LoginRequest;
+import com.chatapp.app_backend.dto.auth.RegisterRequest;
 
-@Service
-public class AuthService {
+public interface AuthService {
 
-    public void register(RegisterRequest request) {
-        System.out.println("Register request received for: " + request.email);
-    }
+    AuthResponse register (RegisterRequest registerRequest);
 
-    public void login(LoginRequest request) {
-        System.out.println("Login request received for: " + request.email);
-    }
+    AuthResponse login (LoginRequest loginRequest);
 }
+
