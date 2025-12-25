@@ -1,7 +1,9 @@
 package com.chatapp.app_backend.security;
 
+import com.chatapp.app_backend.config.AppProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,11 +19,16 @@ public class JwtUtil {
     private final long jwtExpiration;
 
     public JwtUtil(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration}") long jwtExpiration
+          AppProperties appProperties
     ){
-        this.jwtExpiration = jwtExpiration;
-        this.jwtKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+
+
+        byte[] keyBytes = Decoders.BASE64.decode(
+                appProperties.getJwt().getSecretKey()
+        );
+
+        this.jwtKey = Keys.hmacShaKeyFor(keyBytes);
+        this.jwtExpiration = appProperties.getJwt().getExpiration();
     }
 
     public String generateToken(String email, String id){
@@ -41,7 +48,7 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        System.out.println(check);
+//        System.out.println(check);
         return check;
     }
 

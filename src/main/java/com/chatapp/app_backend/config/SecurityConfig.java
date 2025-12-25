@@ -18,9 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    // Inject auth base path from application.properties
-    @Value("${app.api.auth-base}")
-    private String authBase;
+    // Inject auth base path from application-local.properties
+//    @Value("${app.api.auth-base}")
+//    private String authBase;
+
+    private final AppProperties appProperties;
 
     // Custom JWT filter
     private final JwtFilter jwtFilter;
@@ -32,11 +34,13 @@ public class SecurityConfig {
     public SecurityConfig(
             JwtFilter jwtFilter,
             CustomAuthenticationEntryPoint authenticationEntryPoint,
-            CustomAccessDeniedHandler accessDeniedHandler
+            CustomAccessDeniedHandler accessDeniedHandler,
+            AppProperties appProperties
     ) {
         this.jwtFilter = jwtFilter;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
+        this.appProperties = appProperties;
     }
 
     /**
@@ -56,7 +60,7 @@ public class SecurityConfig {
         // Authorization rules
         http.authorizeHttpRequests(auth -> auth
                 // Allow login/register without token
-                .requestMatchers(authBase + "/**").permitAll()
+                .requestMatchers(appProperties.getApi().getAuthBase() + "/**").permitAll()
 //                        .requestMatchers("/vps_chat_room/auth/**").permitAll()
                 // All other APIs require authentication
                 .anyRequest().authenticated()

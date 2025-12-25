@@ -1,5 +1,6 @@
 package com.chatapp.app_backend.security;
 
+import com.chatapp.app_backend.config.AppProperties;
 import com.chatapp.app_backend.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -25,16 +26,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
     // Base auth path injected from properties
     // Used to SKIP JWT validation for login/register
-    @Value("${app.api.auth-base}")
-    private String authBasePath;
+//    @Value("${app.api.auth-base}")
+//    private String authBasePath;
 
+    private final AppProperties appProperties;
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-    public JwtFilter(JwtUtil jwtUtil, UserRepository userRepository) {
+    public JwtFilter(JwtUtil jwtUtil, UserRepository userRepository,
+                     AppProperties appProperties) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.appProperties =appProperties;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // ✅ Skip JWT processing for public auth endpoints
-        if (path.startsWith(authBasePath)) {
+        if (path.startsWith(appProperties.getApi().getAuthBase())) {
             filterChain.doFilter(request, response);
             return;
         }

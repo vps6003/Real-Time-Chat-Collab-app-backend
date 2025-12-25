@@ -14,18 +14,24 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     private final SignalingSocketHandler signalingSocketHandler;
 
-    // read from application.properties
-    @Value("${app.ws.endpoint}")
-    private String wsEndpoint;
+    // read from application-local.properties
+//    @Value("${app.ws.endpoint}")
+//    private String wsEndpoint;
 
-    public WebSocketConfig(SignalingSocketHandler signalingSocketHandler) {
+    private  final AppProperties appProperties;
+
+
+    public WebSocketConfig(SignalingSocketHandler signalingSocketHandler,
+                           AppProperties appProperties) {
         this.signalingSocketHandler = signalingSocketHandler;
+        this.appProperties = appProperties;
+
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 
-        registry.addHandler(signalingSocketHandler, wsEndpoint)
+        registry.addHandler(signalingSocketHandler, appProperties.getWs().getEndpoint())
                 .setAllowedOrigins("*"); // dev mode only
 
 //        // print in IntelliJ terminal ( also have to import logger so won't log here)
