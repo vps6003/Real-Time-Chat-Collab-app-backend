@@ -28,7 +28,7 @@ public class StartupLogger {
 //    @Value("${app.env}")
 //    private  String environment;
 
-    AppProperties appProperties;
+   private final AppProperties appProperties;
 
     public StartupLogger(AppProperties appProperties){
         this.appProperties = appProperties;

@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
@@ -30,13 +31,16 @@ public class SecurityConfig {
     // Custom handlers to return JSON instead of HTML
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     public SecurityConfig(
             JwtFilter jwtFilter,
             CustomAuthenticationEntryPoint authenticationEntryPoint,
             CustomAccessDeniedHandler accessDeniedHandler,
-            AppProperties appProperties
+            AppProperties appProperties,
+            CorsConfigurationSource corsConfigurationSource
     ) {
+        this.corsConfigurationSource = corsConfigurationSource;
         this.jwtFilter = jwtFilter;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
@@ -48,6 +52,10 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+                // ✅ Explicit CORS configuration (NEW WAY)
+                .cors(cors -> cors.configurationSource(this.corsConfigurationSource));
 
         // Disable CSRF (JWT is stateless, no sessions)
         http.csrf(csrf -> csrf.disable());
@@ -91,8 +99,8 @@ public class SecurityConfig {
     /**
      * Password encoder for hashing passwords
      */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 }
