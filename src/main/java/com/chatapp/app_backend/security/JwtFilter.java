@@ -16,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * JWT authentication filter
@@ -72,10 +74,15 @@ public class JwtFilter extends OncePerRequestFilter {
                 // Load user and set authentication context
                 userRepository.findByEmail(email).ifPresent(user -> {
 
+                    Map<String, String> multipleCredentials = new HashMap<>();
+                    multipleCredentials.put("email", user.getEmail());
+                    multipleCredentials.put("username", user.getUsername());
+                    multipleCredentials.put("userId", user.getId());
+
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     user,
-                                    null,
+                                    multipleCredentials,
                                     Collections.emptyList()
                             );
 

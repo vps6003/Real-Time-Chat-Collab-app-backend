@@ -16,6 +16,16 @@ public class AppProperties {
     // ========= API =========
     public static class Api {
         private String authBase;
+        private String base;
+
+        public String getApiBase() {
+            return base;
+        }
+
+        public void setApiBase(String base) {
+            this.base = base;
+        }
+
         public String getAuthBase() { return authBase; }
         public void setAuthBase(String authBase) { this.authBase = authBase; }
     }
